@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"flag"
 	"fmt"
 	"gofred"
@@ -43,7 +42,7 @@ func main() {
 	items := []gofred.Item{}
 
 	if flag.Arg(0) != "create" {
-		cmd := exec.Command("bash", "-c", "ls | grep .config")
+		cmd := exec.Command("bash", "-c", "ls conf/")
 		rc, err := cmd.StdoutPipe()
 		if err != nil {
 			Message(response, "error", err.Error(), true)
@@ -65,8 +64,7 @@ func main() {
 				Message(response, "error", err.Error(), true)
 				return
 			}
-			index := bytes.Index(line, []byte("."))
-			name := string(line[:index])
+			name := strings.TrimSpace(string(line))
 
 			status := "Off"
 			command := "Start"
@@ -86,7 +84,7 @@ func main() {
 		}
 		items = append(items, gofred.NewItem("Add new config", noSubtitle, "create ").AddIcon("plus.png", ""))
 	} else {
-		response.AddVariable("filename", flag.Arg(1)+".config")
+		response.AddVariable("filename", flag.Arg(1))
 		items = append(items, gofred.NewItem("Add new config", fmt.Sprintf("write name ... \"%s\"", flag.Arg(1)), noAutocomplete).AddIcon("plus.png", "").
 			Executable("newConfig"))
 	}
