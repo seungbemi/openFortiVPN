@@ -8,6 +8,7 @@ import (
 
 // Response has all the items for showing on alfred
 type Response struct {
+	Rerun  float32           `json:"rerun,omitempty"`
 	VarMap map[string]string `json:"variables,omitempty"`
 	Items  []Item            `json:"items,omitempty"`
 }
@@ -17,18 +18,6 @@ func NewResponse() *Response {
 	resp := &Response{}
 	resp.VarMap = make(map[string]string)
 	return resp
-}
-
-// NewItem create a new item with basic information
-func NewItem(title, subtitle, autocomplete string) Item {
-	return Item{
-		Title:        title,
-		Autocomplete: autocomplete,
-		SubInfo: SubInfo{
-			Subtitle: subtitle,
-			Valid:    false,
-		},
-	}
 }
 
 // NewItemOnce returns a item to be shown
@@ -46,6 +35,7 @@ func NewItemOnce(title, subtitle, iconType, iconPath, arg, autocomplete, uid, it
 			Subtitle: subtitle,
 			Valid:    valid,
 			Arg:      arg,
+			VarMap:   make(map[string]string),
 		},
 		Mods: mods,
 	}

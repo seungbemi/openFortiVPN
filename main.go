@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"gofred"
-	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strconv"
@@ -16,6 +15,7 @@ const (
 	noSubtitle     = ""
 	noArg          = ""
 	noAutocomplete = ""
+	configFolder   = "conf"
 )
 
 // Message adds simple message
@@ -38,34 +38,25 @@ func main() {
 	if !strings.Contains(path, "/usr/local/bin") {
 		os.Setenv("PATH", path+":/usr/local/bin")
 	}
+	configPath := os.Getenv("alfred_workflow_data") + "/" + configFolder
 	response := gofred.NewResponse()
+
+	err := os.MkdirAll(configPath, os.ModePerm)
+	if err != nil {
+		Message(response, "error", err.Error(), true)
+		return
+	}
+
+	configs, err := ioutil.ReadDir(configPath)
+	if err != nil {
+		Message(response, "error", err.Error(), true)
+		return
+	}
 	items := []gofred.Item{}
 
 	if flag.Arg(0) != "create" {
-		cmd := exec.Command("bash", "-c", "ls conf/")
-		rc, err := cmd.StdoutPipe()
-		if err != nil {
-			Message(response, "error", err.Error(), true)
-			return
-		}
-		defer rc.Close()
-
-		if cmd.Start(); err != nil {
-			Message(response, "error", err.Error(), true)
-			return
-		}
-		rd := bufio.NewReader(rc)
-
-		for {
-			line, _, err := rd.ReadLine()
-			if err == io.EOF || line == nil {
-				break
-			} else if err != nil {
-				Message(response, "error", err.Error(), true)
-				return
-			}
-			name := strings.TrimSpace(string(line))
-
+		for _, config := range configs {
+			name := config.Name()
 			status := "Off"
 			command := "Start"
 			n, err := exec.Command("bash", "-c", fmt.Sprintf("ps aux | grep openfortivpn | grep -v grep | grep -v osascript | grep %s | wc -l", string(name))).CombinedOutput()

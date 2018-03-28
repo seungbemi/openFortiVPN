@@ -1,14 +1,14 @@
 {
 	"ImportPath": "openFortiVPN",
 	"GoVersion": "go1.8",
-	"GodepVersion": "v79",
+	"GodepVersion": "v80",
 	"Packages": [
 		"gofred"
 	],
 	"Deps": [
 		{
 			"ImportPath": "gofred",
-			"Rev": "edad44b9bdcf82b2c65610d8323c851b61366dc2"
+			"Rev": "1c67ae091ffe62ca983b9417db5a05d29a2b4bf9"
 		}
 	]
 }
