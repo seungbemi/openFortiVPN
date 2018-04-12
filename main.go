@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"gofred"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"github.com/seungbemi/gofred"
 )
 
 const (
@@ -39,8 +40,8 @@ func main() {
 		os.Setenv("PATH", path+":/usr/local/bin")
 	}
 	configPath := os.Getenv("alfred_workflow_data") + "/" + configFolder
-	response := gofred.NewResponse()
 
+	response := gofred.NewResponse()
 	err := os.MkdirAll(configPath, os.ModePerm)
 	if err != nil {
 		Message(response, "error", err.Error(), true)
